@@ -1,10 +1,34 @@
+/*
+ Copyright (c) 2015 Ron Coleman
+ Permission is hereby granted, free of charge, to any person obtaining
+ a copy of this software and associated documentation files (the
+ "Software"), to deal in the Software without restriction, including
+ without limitation the rights to use, copy, modify, merge, publish,
+ distribute, sublicense, and/or sell copies of the Software, and to
+ permit persons to whom the Software is furnished to do so, subject to
+ the following conditions:
+ The above copyright notice and this permission notice shall be
+ included in all copies or substantial portions of the Software.
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package astar;
 
 /**
- * Node class.
+ * This class implements the node in A* pathfinding.
+ * @author Ron Coleman
  */
 public class Node {
 
+    /**
+     * Total number of nodes created.
+     */
+    
     public static int idCount;
     private int x;
     private int y;
@@ -29,27 +53,13 @@ public class Node {
     }
 
     /**
-     * Constructor.
-     *
-     * @param x X coordinate.
-     * @param y Y coordinate.
-     * @param parent Parent node of node.
-     */
-    public Node(int x, int y, Node parent) {
-        this(x, y);
-
-        this.parent = parent;
-        parent.child = this;
-        this.steps = parent.steps + 1;
-    }
-
-    /**
      * Copy constructor
      *
      * @param node Node to copy.
      */
     public Node(Node node) {
         this(node.x, node.y);
+        this.id = idCount++;
     }
 
     /**
@@ -59,6 +69,15 @@ public class Node {
      */
     public Node getParent() {
         return parent;
+    }
+    
+    /**
+     * Sets the parent of this node
+     * @param node Parent node
+     */
+    public void setParent(Node node) {
+        this.parent = node;
+        this.parent.child = node;
     }
 
     /**
@@ -136,17 +155,19 @@ public class Node {
      *
      * @return Steps from parent.
      */
-    public int getSteps() {
+    public int length() {
+        steps = 1;
+        
+        Node node = this;
+        
+        while(node.getParent() != null) {
+            steps++;
+            
+            node = node.getParent();
+            
+        }
+        
         return steps;
-    }
-
-    /**
-     * Set the parent node.
-     *
-     * @param parent Parent node.
-     */
-    public void setParent(Node parent) {
-        this.parent = parent;
     }
 
     /**
@@ -184,51 +205,58 @@ public class Node {
         return child;
     }
 
+    /**
+     * Gets the path inertia.
+     * @return Double
+     */
     public double getInertia() {
         return inertia;
     }
 
+    /**
+     * Sets the child of this node.
+     * @param child 
+     */
     public void setChild(Node child) {
         this.child = child;
     }
 
+    /**
+     * Sets number of steps of this node.
+     * @param steps Number of steps
+     */
     public void setSteps(int steps) {
         this.steps = steps;
     }
 
+    /**
+     * Sets Y coordinate of this node.
+     * @param y Y coordinate
+     */
     public void setY(int y) {
         this.y = y;
     }
 
+    /**
+     * Sets X coordinate of this node.
+     * @param x 
+     */
     public void setX(int x) {
         this.x = x;
     }
 
+    /**
+     * Sets inertia of this node.
+     * @param strength Inertia
+     */
     public void setInertia(double strength) {
         this.inertia = strength;
     }
 
-    public void incInertia() {
+    /**
+     * Increments the inertia.
+     */
+    public void incrementInertia() {
         inertia += 1;
     }
-
-//    public String toString() {
-//        String pars = "par()";
-//        if (parent != null) {
-//            int parx, pary;
-//            parx = parent.getX();
-//            pary = parent.getY();
-//            pars = "par(" + parx + " " + pary + ")";
-//        }
-//
-//        String chis = "chi()";
-//        if (child != null) {
-//            int chix, chiy;
-//            chix = child.getX();
-//            chiy = child.getY();
-//            chis = "chi(" + chix + " " + chiy + ")";
-//        }
-//
-//        return "(" + x + " " + y + ") " + pars + " " + chis;
-//    }
 }

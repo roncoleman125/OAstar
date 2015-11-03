@@ -166,7 +166,7 @@ public class Astar {
                 }
 
                 // Get the known cost, namely, how far we've travelled so far
-                double g = adjNode.getSteps();
+                double g = adjNode.length();
                 
                 // Get the heuristic cost, namely, how far we have to go
                 double h = calculateHeuristic(adjNode, dest);
@@ -303,7 +303,10 @@ public class Astar {
                 continue;
             }
 
-            return new Node(adjX, adjY, parent);
+            Node adjacent = new Node(adjX, adjY);
+            adjacent.setParent(parent);
+            
+            return adjacent;
         }
 
         return null;
@@ -543,40 +546,49 @@ public class Astar {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        // Set up the random seed
         long seed = System.currentTimeMillis();
         
         if(args.length != 0)
             seed = Long.parseLong(args[0]);
-        
-        System.out.println("seed = "+seed);
-        
+       
+        // Get the world configuration and create the world
         Config config = Config.getInstance();
         
         int width = config.map.width;
         int height = config.map.height;
         LevelGenerator world = new LevelGenerator(width, height, seed);
 
+        // Set start to the upper left corner
         world.layout(0,0);
 
+        // Create an A* pathfinder for this world
         Node.idCount = 0;
         Astar astar = new Astar(world.getMap(), world.getStartX(), world.getStartY(), world.getDestX(), world.getDestY());
         
+        // Find a path for the configured objective
         Objective objective = config.objective;
+        
         Node path = astar.find(objective);
 
-        world.layoutObstacles();
-
-        System.out.println(world);
-
+        // If we find a path, output the statistics
         if (path != null) {
+            // Draw the path in the world
             world.walk(path);
             
+            // Output the stats
             System.out.println(world);
 
-            System.out.println(path);
+            System.out.println(path+"\n");
+            
+            System.out.println("path length: "+path.length());
         } else {
             System.out.println("NO PATH !");
         }
-        System.out.println("\nnode count: "+Node.idCount);
+        
+        // Output the remaining statistics
+        System.out.println("node count: "+Node.idCount);
+                
+        System.out.println("seed: "+seed);
     }
 }
