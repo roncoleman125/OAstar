@@ -1,0 +1,6 @@
+{
+    "objective": "basic",
+    "heuristic": "euclidean",
+    "map.width": 10,
+    "map.height": 10
+}
